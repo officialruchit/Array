@@ -1,0 +1,168 @@
+using System;
+
+namespace TwoDimensionalArraySorter
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("|=================================================================|");
+            Console.WriteLine("\tARRAY SORTER");
+            Console.WriteLine("|=================================================================|");
+            Console.WriteLine();
+
+            // Get array size from the user
+            int rowCount = GetValidatedArraySize();
+
+            // Create the array
+            int[,] array = new int[rowCount, 2];
+
+            // Get array elements from the user
+            GetArrayElements(array);
+
+            // Display the entered array
+            Console.WriteLine("You have entered below array values:");
+            DisplayArray(array);
+
+            // Get sorting column and order from the user
+            int sortingColumn = GetSortingColumn();
+            int sortingOrder = GetSortingOrder();
+
+            // Sort the array
+            SortArray(array, sortingColumn, sortingOrder);
+
+            // Display the sorted array
+            Console.WriteLine("\nSorted 2D array:");
+            DisplayArray(array);
+            Console.ReadLine();
+        }
+
+        static int GetValidatedArraySize()
+        {
+            while (true)
+            {
+                Console.Write("Input array row count [1 to 10]: ");
+                string input = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(input) || !int.TryParse(input, out int size) || size < 1 || size > 10)
+                {
+                    Console.WriteLine("Error: Entered array size is invalid.");
+                    Console.WriteLine("Please enter a valid integer between 1 and 10.");
+                    continue;
+                }
+
+                return size;
+            }
+        }
+
+        static void GetArrayElements(int[,] array)
+        {
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    bool check = true;
+                    while (check)
+                    {
+                        Console.Write($"Enter element for [{i}, {j}]: ");
+                        bool isUserInputValid = int.TryParse(Console.ReadLine(), out (array[i, j]));
+                        if (isUserInputValid == false)
+                        {
+                            Console.WriteLine("Invalid");
+                            continue;
+                        }
+                        else
+                            check = false;
+                    }
+                }
+            }
+        }
+
+
+        static void DisplayArray(int[,] array)
+        {
+            Console.WriteLine("\tX\tY");
+            Console.WriteLine("\t-------------");
+
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                Console.WriteLine($"\t{array[i, 0]}\t{array[i, 1]}");
+            }
+        }
+
+        static int GetSortingColumn()
+        {
+            while (true)
+            {
+                Console.Write("On which column you want to sort (Enter X/x or Y/y): ");
+                string input = Console.ReadLine().Trim().ToLower();
+
+                if (string.IsNullOrWhiteSpace(input) || (input != "x" && input != "y"))
+                {
+                    Console.WriteLine("Error: Entered sorting column is invalid.");
+                    Console.WriteLine("Please enter 'X' or 'Y'.");
+                    continue;
+                }
+
+                if (input == "x")
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+        static int GetSortingOrder()
+        {
+            while (true)
+            {
+                Console.Write("Which sorting type you want to apply (Enter 1 for Ascending sorting, 2 for Descending sorting): ");
+                string input = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(input) || !int.TryParse(input, out int order) || (order != 1 && order != 2))
+                {
+                    Console.WriteLine("Error: Entered sorting order is invalid.");
+                    Console.WriteLine("Please enter '1' for Ascending or '2' for Descending.");
+                    continue;
+                }
+
+                return order;
+            }
+        }
+
+        static void SortArray(int[,] array, int sortingColumn, int sortingOrder)
+        {
+            int rowCount = array.GetLength(0);
+
+            for (int i = 0; i < rowCount - 1; i++)
+            {
+                for (int j = 0; j < rowCount - i - 1; j++)
+                {
+                    bool shouldSwap = ShouldSwap(array[j, sortingColumn], array[j + 1, sortingColumn ], sortingOrder);
+
+                    if (shouldSwap)
+                    {
+                        // Swap rows
+                        for (int k = 0; k < 2; k++)
+                        {
+                            int temp = array[j, k];
+                            array[j, k] = array[j + 1, k];
+                            array[j + 1, k] = temp;
+                        }
+                    }
+                }
+            }
+        }
+
+        static bool ShouldSwap(int a, int b, int sortingOrder)
+        {
+            if (sortingOrder == 1)
+                return a > b;
+            else
+                return a < b;
+        }
+    }
+}
